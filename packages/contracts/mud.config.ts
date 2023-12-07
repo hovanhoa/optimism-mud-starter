@@ -4,7 +4,17 @@ export default mudConfig({
   tables: {
     Counter: {
       keySchema: {},
-      schema: "uint32",
+      schema: {
+        value: "uint32",
+        factoryValue: "uint32",
+      },
     },
+    BalanceTable: {
+      keySchema: {
+        owner: "address",
+        item: "uint32"
+      },
+      schema: "uint32"
+    }
   },
 });

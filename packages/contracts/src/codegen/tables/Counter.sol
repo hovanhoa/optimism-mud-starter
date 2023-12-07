@@ -20,11 +20,17 @@ import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCou
 bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("Counter")));
 bytes32 constant CounterTableId = _tableId;
 
+struct CounterData {
+  uint32 value;
+  uint32 factoryValue;
+}
+
 library Counter {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](1);
+    SchemaType[] memory _schema = new SchemaType[](2);
     _schema[0] = SchemaType.UINT32;
+    _schema[1] = SchemaType.UINT32;
 
     return SchemaLib.encode(_schema);
   }
@@ -37,8 +43,9 @@ library Counter {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](1);
+    string[] memory _fieldNames = new string[](2);
     _fieldNames[0] = "value";
+    _fieldNames[1] = "factoryValue";
     return ("Counter", _fieldNames);
   }
 
@@ -65,7 +72,7 @@ library Counter {
   }
 
   /** Get value */
-  function get() internal view returns (uint32 value) {
+  function getValue() internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
@@ -73,7 +80,7 @@ library Counter {
   }
 
   /** Get value (using the specified store) */
-  function get(IStore _store) internal view returns (uint32 value) {
+  function getValue(IStore _store) internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
@@ -81,22 +88,103 @@ library Counter {
   }
 
   /** Set value */
-  function set(uint32 value) internal {
+  function setValue(uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
 
   /** Set value (using the specified store) */
-  function set(IStore _store, uint32 value) internal {
+  function setValue(IStore _store, uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
 
+  /** Get factoryValue */
+  function getFactoryValue() internal view returns (uint32 factoryValue) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
+    return (uint32(Bytes.slice4(_blob, 0)));
+  }
+
+  /** Get factoryValue (using the specified store) */
+  function getFactoryValue(IStore _store) internal view returns (uint32 factoryValue) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
+    return (uint32(Bytes.slice4(_blob, 0)));
+  }
+
+  /** Set factoryValue */
+  function setFactoryValue(uint32 factoryValue) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((factoryValue)));
+  }
+
+  /** Set factoryValue (using the specified store) */
+  function setFactoryValue(IStore _store, uint32 factoryValue) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((factoryValue)));
+  }
+
+  /** Get the full data */
+  function get() internal view returns (CounterData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getRecord(_tableId, _keyTuple, getSchema());
+    return decode(_blob);
+  }
+
+  /** Get the full data (using the specified store) */
+  function get(IStore _store) internal view returns (CounterData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getRecord(_tableId, _keyTuple, getSchema());
+    return decode(_blob);
+  }
+
+  /** Set the full data using individual values */
+  function set(uint32 value, uint32 factoryValue) internal {
+    bytes memory _data = encode(value, factoryValue);
+
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _data);
+  }
+
+  /** Set the full data using individual values (using the specified store) */
+  function set(IStore _store, uint32 value, uint32 factoryValue) internal {
+    bytes memory _data = encode(value, factoryValue);
+
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setRecord(_tableId, _keyTuple, _data);
+  }
+
+  /** Set the full data using the data struct */
+  function set(CounterData memory _table) internal {
+    set(_table.value, _table.factoryValue);
+  }
+
+  /** Set the full data using the data struct (using the specified store) */
+  function set(IStore _store, CounterData memory _table) internal {
+    set(_store, _table.value, _table.factoryValue);
+  }
+
+  /** Decode the tightly packed blob using this table's schema */
+  function decode(bytes memory _blob) internal pure returns (CounterData memory _table) {
+    _table.value = (uint32(Bytes.slice4(_blob, 0)));
+
+    _table.factoryValue = (uint32(Bytes.slice4(_blob, 4)));
+  }
+
   /** Tightly pack full data using this table's schema */
-  function encode(uint32 value) internal view returns (bytes memory) {
-    return abi.encodePacked(value);
+  function encode(uint32 value, uint32 factoryValue) internal view returns (bytes memory) {
+    return abi.encodePacked(value, factoryValue);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

@@ -5,10 +5,14 @@ import { System } from "@latticexyz/world/src/System.sol";
 import { Counter } from "../codegen/Tables.sol";
 
 contract IncrementSystem is System {
-  function increment() public returns (uint32) {
-    uint32 counter = Counter.get();
+  function increment() public returns (uint32, uint32) {
+    uint32 counter = Counter.getValue();
     uint32 newValue = counter + 1;
-    Counter.set(newValue);
-    return newValue;
+    Counter.setValue(newValue);
+
+    uint32 factoryCounter = Counter.getFactoryValue();
+    uint32 newFactoryValue = factoryCounter + newValue;
+    Counter.setFactoryValue(newFactoryValue);
+    return (newValue, newFactoryValue);
   }
 }

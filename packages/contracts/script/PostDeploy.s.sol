@@ -16,8 +16,11 @@ contract PostDeploy is Script {
     // ------------------ EXAMPLES ------------------
 
     // Call increment on the world via the registered function selector
-    uint32 newValue = IWorld(worldAddress).increment();
+    uint32 newValue;
+    uint32 newFactoryValue;
+    (newValue, newFactoryValue) = IWorld(worldAddress).increment();
     console.log("Increment via IWorld:", newValue);
+    console.log("Double Increment via IWorld:", newFactoryValue);
 
     vm.stopBroadcast();
   }

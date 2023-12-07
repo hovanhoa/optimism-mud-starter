@@ -11,6 +11,22 @@ export function defineContractComponents(world: World) {
         world,
         {
           value: RecsType.Number,
+          factoryValue: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    BalanceTable: (() => {
+      const tableId = new TableId("", "BalanceTable");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Number,
         },
         {
           metadata: {
