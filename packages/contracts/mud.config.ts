@@ -15,6 +15,15 @@ export default mudConfig({
         item: "uint32"
       },
       schema: "uint32"
-    }
+    },
+    History: {
+      keySchema: {
+        counterValue: "uint32",
+      },
+      schema: {
+        blockNumber: "uint256",
+        time: "uint256",
+      }
+    },
   },
 });
