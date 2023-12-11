@@ -25,5 +25,12 @@ export default mudConfig({
         time: "uint256",
       }
     },
+    Accounts: {
+      keySchema: {},
+      schema: {
+        username: "string",
+        password: "string",
+      }
+    }
   },
 });

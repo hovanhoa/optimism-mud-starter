@@ -6,3 +6,4 @@ pragma solidity >=0.8.0;
 import { Counter, CounterData, CounterTableId } from "./tables/Counter.sol";
 import { BalanceTable, BalanceTableTableId } from "./tables/BalanceTable.sol";
 import { History, HistoryData, HistoryTableId } from "./tables/History.sol";
+import { Accounts, AccountsData, AccountsTableId } from "./tables/Accounts.sol";
